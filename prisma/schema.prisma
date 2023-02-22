@@ -1,0 +1,43 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model Link {
+  id          String   @id
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime
+  title       String
+  description String
+  url         String
+  imageUrl    String   @db.VarChar(500)
+  category    String
+}
+
+model User {
+  id        String    @id
+  createdAt DateTime  @default(now())
+  updatedAt DateTime
+  email     String?   @unique
+  image     String?
+  role      User_role @default(USER)
+  name      String?
+}
+
+model LinkToUser {
+  A String
+  B String
+
+  @@unique([A, B], map: "_LinkToUser_AB_unique")
+  @@index([B], map: "_LinkToUser_B_index")
+  @@map("_LinkToUser")
+}
+
+enum User_role {
+  USER
+  ADMIN
+}
