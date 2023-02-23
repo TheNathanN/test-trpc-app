@@ -5,9 +5,13 @@ import styles from "@/styles/Home.module.css"
 const oswald = Oswald({ subsets: ["latin"] })
 
 import { trpc } from "../utils/trpc"
+import { signIn, signOut, useSession } from "next-auth/react"
 
 export default function IndexPage() {
   const hello = trpc.hello.useQuery({ text: "client" })
+  const { status, data } = useSession()
+
+  console.log(status, data)
 
   return (
     <>
@@ -20,12 +24,11 @@ export default function IndexPage() {
       <main>
         <div className={oswald.className}>
           <h1>TRPC TEST APP</h1>
-          <form className={styles.form}>
-            <label htmlFor="email">Email</label>
-            <input type="email" id="email" name="email" required />
-            <label htmlFor="name">Name</label>
-            <input type="text" id="name" name="name" />
-          </form>
+          {!data ? (
+            <button onClick={() => signIn()}>Sign In</button>
+          ) : (
+            <button onClick={() => signOut()}>Sign Out</button>
+          )}
           <div>
             {!hello.data ? <p>Loading...</p> : <p>{hello.data.greeting}</p>}
           </div>
