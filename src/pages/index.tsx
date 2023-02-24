@@ -1,17 +1,19 @@
 import Head from "next/head"
-import { Oswald } from "@next/font/google"
 import styles from "@/styles/Home.module.css"
 
-const oswald = Oswald({ subsets: ["latin"] })
-
 import { trpc } from "../utils/trpc"
-import { signIn, signOut, useSession } from "next-auth/react"
+import { signOut, useSession } from "next-auth/react"
+import { useRouter } from "next/router"
 
 export default function IndexPage() {
-  const hello = trpc.hello.useQuery({ text: "client" })
   const { status, data } = useSession()
+  const router = useRouter()
 
-  console.log(status, data)
+  if (status !== "loading" && !data) router.push("/auth/signin")
+
+  if (!data) return <div></div>
+
+  const hello = trpc.hello.useQuery({ text: "client" })
 
   return (
     <>
@@ -21,19 +23,14 @@ export default function IndexPage() {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <main>
-        <div className={oswald.className}>
-          <h1>TRPC TEST APP</h1>
-          {!data ? (
-            <button onClick={() => signIn()}>Sign In</button>
-          ) : (
-            <button onClick={() => signOut()}>Sign Out</button>
-          )}
-          <div>
-            {!hello.data ? <p>Loading...</p> : <p>{hello.data.greeting}</p>}
-          </div>
+
+      <div>
+        <h1>TRPC TEST APP</h1>
+        <button onClick={() => signOut()}>Sign Out</button>
+        <div>
+          {!hello.data ? <p>Loading...</p> : <p>{hello.data.greeting}</p>}
         </div>
-      </main>
+      </div>
     </>
   )
 }
