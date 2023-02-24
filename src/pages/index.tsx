@@ -9,7 +9,7 @@ export default function IndexPage() {
   const { status, data } = useSession()
   const router = useRouter()
 
-  if (status !== "loading" && !data) router.push("/auth/signin")
+  if (status !== "loading" && !data) router.push("/auth")
 
   if (!data) return <div></div>
 

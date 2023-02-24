@@ -1,4 +1,4 @@
-import styles from "./SignInForm.module.css"
+import styles from "../AuthFormsStyles.module.css"
 import classNames from "classnames"
 import { useFormik } from "formik"
 
@@ -13,7 +13,7 @@ export default function SignInForm() {
   })
 
   return (
-    <div className={classNames(styles.container)}>
+    <>
       <form className={classNames(styles.form)} onSubmit={formik.handleSubmit}>
         <div className={classNames(styles["input-container"])}>
           <label htmlFor="email">Email</label>
@@ -37,6 +37,6 @@ export default function SignInForm() {
         </div>
         <button type="submit">Sign In</button>
       </form>
-    </div>
+    </>
   )
 }

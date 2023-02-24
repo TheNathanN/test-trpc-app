@@ -3,10 +3,15 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  width: 100%;
+}
+
+.contents-container {
+  width: 90%;
+  max-width: 40rem;
 }
 
 .btn-container {
-  width: 100%;
   display: flex;
   justify-content: space-evenly;
   margin: 0.5rem 0;
@@ -15,4 +20,12 @@
 .btn-container button {
   cursor: pointer;
   padding: 0.2rem 1rem;
+}
+
+.form-container {
+  background-color: #f2f2f2;
+  color: black;
+  border-radius: 0.1rem;
+  padding: 1rem 2rem;
+  margin: 0 auto;
 }
