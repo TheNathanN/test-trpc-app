@@ -1,13 +1,29 @@
 import styles from "../AuthFormsStyles.module.css"
 import classNames from "classnames"
 import { Formik } from "formik"
-import { useState } from "react"
+import { useState, useMemo } from "react"
 import { SignUpSchema } from "@/utils/validationSchemas/signUpValidation"
 import { trpc } from "@/utils/trpc"
+import LoadingSpinner from "@/components/LoadingSpinner"
+import PasswordEyeIcon from "@/components/PasswordEyeIcon"
 
 export default function SignUpForm() {
   const [showPassword, setShowPassword] = useState(false)
   const signUp = trpc.user.createUser.useMutation()
+
+  const onSubmit = async (values: {
+    email: string
+    username: string
+    password: string
+  }) => {
+    signUp.mutate({
+      email: values.email,
+      username: values.username,
+      password: values.password,
+    })
+  }
+
+  const signUpMessage = useMemo(() => signUp.error?.message, [signUp?.error])
 
   return (
     <>
@@ -19,15 +35,7 @@ export default function SignUpForm() {
           confirmPassword: "",
         }}
         validationSchema={SignUpSchema}
-        onSubmit={async (values) => {
-          const status = await signUp.mutate({
-            email: values.email,
-            username: values.username,
-            password: values.password,
-          })
-
-          console.log(status)
-        }}
+        onSubmit={onSubmit}
       >
         {(props) => {
           return (
@@ -47,11 +55,13 @@ export default function SignUpForm() {
                   required
                 />
               </div>
+
               {props.errors.email && props.touched.email ? (
                 <div className={classNames(styles.error)}>
                   {props.errors.email}
                 </div>
               ) : null}
+
               <div className={classNames(styles["input-container"])}>
                 <label htmlFor="username">Username</label>
                 <input
@@ -64,11 +74,13 @@ export default function SignUpForm() {
                   required
                 />
               </div>
+
               {props.errors.username && props.touched.username ? (
                 <div className={classNames(styles.error)}>
                   {props.errors.username}
                 </div>
               ) : null}
+
               <div className={classNames(styles["input-container"])}>
                 <label htmlFor="password">Password</label>
                 <input
@@ -80,12 +92,18 @@ export default function SignUpForm() {
                   value={props.values.password}
                   required
                 />
+                <PasswordEyeIcon
+                  showPassword={showPassword}
+                  setShowPassword={setShowPassword}
+                />
               </div>
+
               {props.errors.password && props.touched.password ? (
                 <div className={classNames(styles.error)}>
                   {props.errors.password}
                 </div>
               ) : null}
+
               <div className={classNames(styles["input-container"])}>
                 <label htmlFor="confirmPassword">Confirm Password</label>
                 <input
@@ -97,13 +115,25 @@ export default function SignUpForm() {
                   value={props.values.confirmPassword}
                   required
                 />
+                <PasswordEyeIcon
+                  showPassword={showPassword}
+                  setShowPassword={setShowPassword}
+                />
               </div>
+
               {props.errors.confirmPassword && props.touched.confirmPassword ? (
                 <div className={classNames(styles.error)}>
                   {props.errors.confirmPassword}
                 </div>
               ) : null}
-              <button type="submit">Sign Up</button>
+
+              <button type="submit">
+                {signUp.isLoading ? <LoadingSpinner /> : "Sign Up"}
+              </button>
+
+              {signUpMessage && (
+                <div className={classNames(styles.error)}>{signUpMessage}</div>
+              )}
             </form>
           )
         }}

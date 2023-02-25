@@ -4,18 +4,31 @@ import { Formik } from "formik"
 import { SignInSchema } from "@/utils/validationSchemas/signInValidation"
 import { signIn } from "next-auth/react"
 import { useRouter } from "next/router"
+import { useState } from "react"
+import LoadingSpinner from "@/components/LoadingSpinner"
+import PasswordEyeIcon from "@/components/PasswordEyeIcon"
 
 export default function SignInForm() {
   const router = useRouter()
+
+  const [showPassword, setShowPassword] = useState(false)
+  const [signInError, setSignInError] = useState<string | null>(null)
+  const [loading, setLoading] = useState<boolean>(false)
+
   const onSubmit = async (values: { email: string; password: string }) => {
+    setLoading(true)
+    setSignInError(null)
     const { email, password } = values
     const status = await signIn("credentials", {
       email: email,
       password: password,
       redirect: false,
     })
+    setLoading(false)
     if (status?.ok) router.push("/")
+    else setSignInError("Invalid email or password")
   }
+
   return (
     <>
       <Formik
@@ -49,24 +62,37 @@ export default function SignInForm() {
                   {props.errors.email}
                 </div>
               ) : null}
+
               <div className={classNames(styles["input-container"])}>
                 <label htmlFor="password">Password</label>
                 <input
                   id="password"
                   name="password"
-                  type="password"
+                  type={showPassword ? "text" : "password"}
                   onChange={props.handleChange}
                   onBlur={props.handleBlur}
                   value={props.values.password}
                   required
                 />
+                <PasswordEyeIcon
+                  showPassword={showPassword}
+                  setShowPassword={setShowPassword}
+                />
               </div>
+
               {props.errors.password && props.touched.password ? (
                 <div className={classNames(styles.error)}>
                   {props.errors.password}
                 </div>
               ) : null}
-              <button type="submit">Sign In</button>
+
+              <button className={classNames("btn")} type="submit">
+                {loading ? <LoadingSpinner /> : "Sign In"}
+              </button>
+
+              {signInError && (
+                <div className={classNames(styles.error)}>{signInError}</div>
+              )}
             </form>
           )
         }}
