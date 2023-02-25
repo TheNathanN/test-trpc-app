@@ -1,9 +1,21 @@
 import styles from "../AuthFormsStyles.module.css"
 import classNames from "classnames"
-import { Formik, useFormik } from "formik"
+import { Formik } from "formik"
 import { SignInSchema } from "@/utils/validationSchemas/signInValidation"
+import { signIn } from "next-auth/react"
+import { useRouter } from "next/router"
 
 export default function SignInForm() {
+  const router = useRouter()
+  const onSubmit = async (values: { email: string; password: string }) => {
+    const { email, password } = values
+    const status = await signIn("credentials", {
+      email: email,
+      password: password,
+      redirect: false,
+    })
+    if (status?.ok) router.push("/")
+  }
   return (
     <>
       <Formik
@@ -12,7 +24,7 @@ export default function SignInForm() {
           password: "",
         }}
         validationSchema={SignInSchema}
-        onSubmit={async (values) => {}}
+        onSubmit={onSubmit}
       >
         {(props) => {
           return (

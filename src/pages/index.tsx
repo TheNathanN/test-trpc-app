@@ -13,8 +13,6 @@ export default function IndexPage() {
 
   if (!data) return <div></div>
 
-  const hello = trpc.hello.useQuery({ text: "client" })
-
   return (
     <>
       <Head>
@@ -28,7 +26,7 @@ export default function IndexPage() {
         <h1>TRPC TEST APP</h1>
         <button onClick={() => signOut()}>Sign Out</button>
         <div>
-          {!hello.data ? <p>Loading...</p> : <p>{hello.data.greeting}</p>}
+          <h1>Welcome to the App!</h1>
         </div>
       </div>
     </>

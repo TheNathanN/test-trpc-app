@@ -3,9 +3,11 @@ import classNames from "classnames"
 import { Formik } from "formik"
 import { useState } from "react"
 import { SignUpSchema } from "@/utils/validationSchemas/signUpValidation"
+import { trpc } from "@/utils/trpc"
 
 export default function SignUpForm() {
   const [showPassword, setShowPassword] = useState(false)
+  const signUp = trpc.user.createUser.useMutation()
 
   return (
     <>
@@ -17,7 +19,15 @@ export default function SignUpForm() {
           confirmPassword: "",
         }}
         validationSchema={SignUpSchema}
-        onSubmit={async (values) => {}}
+        onSubmit={async (values) => {
+          const status = await signUp.mutate({
+            email: values.email,
+            username: values.username,
+            password: values.password,
+          })
+
+          console.log(status)
+        }}
       >
         {(props) => {
           return (
