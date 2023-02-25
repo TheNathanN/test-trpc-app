@@ -86,7 +86,7 @@ export default function SignInForm() {
                 </div>
               ) : null}
 
-              <button className={classNames("btn")} type="submit">
+              <button type="submit">
                 {loading ? <LoadingSpinner /> : "Sign In"}
               </button>
 
