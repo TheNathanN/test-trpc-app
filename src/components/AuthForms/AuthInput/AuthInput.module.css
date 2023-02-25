@@ -5,14 +5,3 @@
   align-items: flex-start;
   margin: 0.5rem 0;
 }
-
-.form button {
-  position: relative;
-  width: 100%;
-  padding: 0.5rem 0;
-  margin: 1rem 0;
-}
-
-.error {
-  color: red;
-}

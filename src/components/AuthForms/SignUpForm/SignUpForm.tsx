@@ -1,29 +1,34 @@
-import styles from "../AuthFormsStyles.module.css"
-import classNames from "classnames"
 import { Formik } from "formik"
-import { useState, useMemo } from "react"
+import { useMemo } from "react"
 import { SignUpSchema } from "@/utils/validationSchemas/signUpValidation"
 import { trpc } from "@/utils/trpc"
-import LoadingSpinner from "@/components/LoadingSpinner"
-import PasswordEyeIcon from "@/components/PasswordEyeIcon"
+import AuthInput from "../AuthInput"
+import AuthSubmitButton from "../AuthSubmitButton"
 
 export default function SignUpForm() {
-  const [showPassword, setShowPassword] = useState(false)
   const signUp = trpc.user.createUser.useMutation()
 
   const onSubmit = async (values: {
     email: string
     username: string
     password: string
+    confirmPassword: string
   }) => {
     signUp.mutate({
       email: values.email,
       username: values.username,
       password: values.password,
     })
+    values.email = ""
+    values.password = ""
+    values.username = ""
+    values.confirmPassword = ""
   }
 
-  const signUpMessage = useMemo(() => signUp.error?.message, [signUp?.error])
+  const errorMessage = useMemo(
+    () => signUp.error?.message ?? null,
+    [signUp?.error]
+  )
 
   return (
     <>
@@ -38,102 +43,57 @@ export default function SignUpForm() {
         onSubmit={onSubmit}
       >
         {(props) => {
+          const formInputsData = [
+            {
+              value: props.values.email,
+              type: "email",
+              name: "email",
+              label: "Email",
+              error: props.errors.email,
+              touched: props.touched.email,
+            },
+            {
+              value: props.values.username,
+              type: "text",
+              name: "username",
+              label: "Username",
+              error: props.errors.username,
+              touched: props.touched.username,
+            },
+            {
+              value: props.values.password,
+              type: "password",
+              name: "password",
+              label: "Password",
+              error: props.errors.password,
+              touched: props.touched.password,
+            },
+            {
+              value: props.values.confirmPassword,
+              type: "password",
+              name: "confirmPassword",
+              label: "Confirm Password",
+              error: props.errors.confirmPassword,
+              touched: props.touched.confirmPassword,
+            },
+          ]
+
           return (
-            <form
-              className={classNames(styles.form)}
-              onSubmit={props.handleSubmit}
-            >
-              <div className={classNames(styles["input-container"])}>
-                <label htmlFor="email">Email</label>
-                <input
-                  id="email"
-                  name="email"
-                  type="email"
-                  onChange={props.handleChange}
-                  onBlur={props.handleBlur}
-                  value={props.values.email}
-                  required
+            <form onSubmit={props.handleSubmit}>
+              {formInputsData.map((input) => (
+                <AuthInput
+                  {...input}
+                  key={input.name}
+                  handleChange={props.handleChange}
+                  handleBlur={props.handleBlur}
                 />
-              </div>
-
-              {props.errors.email && props.touched.email ? (
-                <div className={classNames(styles.error)}>
-                  {props.errors.email}
-                </div>
-              ) : null}
-
-              <div className={classNames(styles["input-container"])}>
-                <label htmlFor="username">Username</label>
-                <input
-                  id="username"
-                  name="username"
-                  type="text"
-                  onChange={props.handleChange}
-                  onBlur={props.handleBlur}
-                  value={props.values.username}
-                  required
-                />
-              </div>
-
-              {props.errors.username && props.touched.username ? (
-                <div className={classNames(styles.error)}>
-                  {props.errors.username}
-                </div>
-              ) : null}
-
-              <div className={classNames(styles["input-container"])}>
-                <label htmlFor="password">Password</label>
-                <input
-                  id="password"
-                  name="password"
-                  type={showPassword ? "text" : "password"}
-                  onChange={props.handleChange}
-                  onBlur={props.handleBlur}
-                  value={props.values.password}
-                  required
-                />
-                <PasswordEyeIcon
-                  showPassword={showPassword}
-                  setShowPassword={setShowPassword}
-                />
-              </div>
-
-              {props.errors.password && props.touched.password ? (
-                <div className={classNames(styles.error)}>
-                  {props.errors.password}
-                </div>
-              ) : null}
-
-              <div className={classNames(styles["input-container"])}>
-                <label htmlFor="confirmPassword">Confirm Password</label>
-                <input
-                  id="confirmPassword"
-                  name="confirmPassword"
-                  type={showPassword ? "text" : "password"}
-                  onChange={props.handleChange}
-                  onBlur={props.handleBlur}
-                  value={props.values.confirmPassword}
-                  required
-                />
-                <PasswordEyeIcon
-                  showPassword={showPassword}
-                  setShowPassword={setShowPassword}
-                />
-              </div>
-
-              {props.errors.confirmPassword && props.touched.confirmPassword ? (
-                <div className={classNames(styles.error)}>
-                  {props.errors.confirmPassword}
-                </div>
-              ) : null}
-
-              <button type="submit">
-                {signUp.isLoading ? <LoadingSpinner /> : "Sign Up"}
-              </button>
-
-              {signUpMessage && (
-                <div className={classNames(styles.error)}>{signUpMessage}</div>
-              )}
+              ))}
+              <AuthSubmitButton
+                type="signUp"
+                error={errorMessage}
+                loading={signUp.isLoading}
+                signUpSuccess={signUp.isSuccess}
+              />
             </form>
           )
         }}

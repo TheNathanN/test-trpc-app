@@ -1,17 +1,14 @@
-import styles from "../AuthFormsStyles.module.css"
-import classNames from "classnames"
 import { Formik } from "formik"
 import { SignInSchema } from "@/utils/validationSchemas/signInValidation"
 import { signIn } from "next-auth/react"
 import { useRouter } from "next/router"
 import { useState } from "react"
-import LoadingSpinner from "@/components/LoadingSpinner"
-import PasswordEyeIcon from "@/components/PasswordEyeIcon"
+import AuthInput from "../AuthInput"
+import AuthSubmitButton from "../AuthSubmitButton"
 
 export default function SignInForm() {
   const router = useRouter()
 
-  const [showPassword, setShowPassword] = useState(false)
   const [signInError, setSignInError] = useState<string | null>(null)
   const [loading, setLoading] = useState<boolean>(false)
 
@@ -40,59 +37,40 @@ export default function SignInForm() {
         onSubmit={onSubmit}
       >
         {(props) => {
+          const formInputsData = [
+            {
+              value: props.values.email,
+              type: "email",
+              name: "email",
+              label: "Email",
+              error: props.errors.email,
+              touched: props.touched.email,
+            },
+            {
+              value: props.values.password,
+              type: "password",
+              name: "password",
+              label: "Password",
+              error: props.errors.password,
+              touched: props.touched.password,
+            },
+          ]
+
           return (
-            <form
-              className={classNames(styles.form)}
-              onSubmit={props.handleSubmit}
-            >
-              <div className={classNames(styles["input-container"])}>
-                <label htmlFor="email">Email</label>
-                <input
-                  id="email"
-                  name="email"
-                  type="email"
-                  onChange={props.handleChange}
-                  onBlur={props.handleBlur}
-                  value={props.values.email}
-                  required
+            <form onSubmit={props.handleSubmit}>
+              {formInputsData.map((input) => (
+                <AuthInput
+                  {...input}
+                  key={input.name}
+                  handleBlur={props.handleBlur}
+                  handleChange={props.handleChange}
                 />
-              </div>
-              {props.errors.email && props.touched.email ? (
-                <div className={classNames(styles.error)}>
-                  {props.errors.email}
-                </div>
-              ) : null}
-
-              <div className={classNames(styles["input-container"])}>
-                <label htmlFor="password">Password</label>
-                <input
-                  id="password"
-                  name="password"
-                  type={showPassword ? "text" : "password"}
-                  onChange={props.handleChange}
-                  onBlur={props.handleBlur}
-                  value={props.values.password}
-                  required
-                />
-                <PasswordEyeIcon
-                  showPassword={showPassword}
-                  setShowPassword={setShowPassword}
-                />
-              </div>
-
-              {props.errors.password && props.touched.password ? (
-                <div className={classNames(styles.error)}>
-                  {props.errors.password}
-                </div>
-              ) : null}
-
-              <button type="submit">
-                {loading ? <LoadingSpinner /> : "Sign In"}
-              </button>
-
-              {signInError && (
-                <div className={classNames(styles.error)}>{signInError}</div>
-              )}
+              ))}
+              <AuthSubmitButton
+                type="signIn"
+                loading={loading}
+                error={signInError}
+              />
             </form>
           )
         }}
