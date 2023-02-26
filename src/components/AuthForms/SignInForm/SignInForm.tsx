@@ -1,5 +1,5 @@
 import { Formik } from "formik"
-import { SignInSchema } from "@/utils/validationSchemas/signInValidation"
+import { SignInSchema } from "@/utils/validationSchemas/signInValidation.utils"
 import { signIn } from "next-auth/react"
 import { useRouter } from "next/router"
 import { useState } from "react"

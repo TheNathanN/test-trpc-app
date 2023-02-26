@@ -1,24 +1,27 @@
 import BaseLayout from "@/layouts/BaseLayout"
-import { signOut, useSession } from "next-auth/react"
-import { useRouter } from "next/router"
+import { useSession } from "next-auth/react"
+import { trpc } from "@/utils/trpc.utils"
+import HomeLayout from "@/layouts/HomeLayout"
+import LoadingSpinner from "@/components/LoadingSpinner"
 
 export default function IndexPage() {
   const { status, data } = useSession()
-  const router = useRouter()
 
-  if (status !== "loading" && !data) router.push("/auth")
+  const notSignedIn =
+    status !== "loading" && !data && typeof window !== "undefined"
 
-  if (!data) return <div></div>
+  if (notSignedIn) window.location.href = "/auth"
+
+  const user = data?.user
+  const userData = trpc.user.getUser.useQuery({ email: user?.email ?? "" })
 
   return (
     <BaseLayout>
-      <div>
-        <h1>TRPC TEST APP</h1>
-        <button onClick={() => signOut()}>Sign Out</button>
-        <div>
-          <h1>Welcome to the App!</h1>
-        </div>
-      </div>
+      {!userData.data ? (
+        <LoadingSpinner color="white" width="10%" />
+      ) : (
+        <HomeLayout userData={userData.data} />
+      )}
     </BaseLayout>
   )
 }

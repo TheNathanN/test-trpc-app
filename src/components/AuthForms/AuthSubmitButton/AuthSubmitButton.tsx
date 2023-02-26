@@ -19,7 +19,7 @@ export default function AuthSubmitButton({
   return (
     <>
       <button className={classNames(styles.button)} type="submit">
-        {loading ? <LoadingSpinner /> : label}
+        {loading ? <LoadingSpinner color="black" width="100%" /> : label}
       </button>
 
       {error && <div className={classNames(styles.error)}>{error}</div>}

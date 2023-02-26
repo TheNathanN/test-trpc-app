@@ -1,6 +1,6 @@
 import "@/styles/globals.css"
 import type { AppType } from "next/app"
-import { trpc } from "../utils/trpc"
+import { trpc } from "../utils/trpc.utils"
 import { SessionProvider } from "next-auth/react"
 import { Session } from "next-auth"
 import { Oswald } from "@next/font/google"

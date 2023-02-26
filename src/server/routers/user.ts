@@ -52,6 +52,12 @@ export const userRouter = router({
         where: {
           email,
         },
+        select: {
+          id: true,
+          email: true,
+          username: true,
+          image: true,
+        },
       })
       return user
     }),

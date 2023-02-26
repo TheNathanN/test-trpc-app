@@ -1,7 +1,7 @@
 import { Formik } from "formik"
 import { useMemo } from "react"
-import { SignUpSchema } from "@/utils/validationSchemas/signUpValidation"
-import { trpc } from "@/utils/trpc"
+import { SignUpSchema } from "@/utils/validationSchemas/signUpValidation.utils"
+import { trpc } from "@/utils/trpc.utils"
 import AuthInput from "../AuthInput"
 import AuthSubmitButton from "../AuthSubmitButton"
 

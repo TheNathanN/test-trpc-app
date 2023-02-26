@@ -1,9 +1,20 @@
 import styles from "./LoadingSpinner.module.css"
 import classNames from "classnames"
 
-export default function LoadingSpinner() {
+export type LoadingSpinnerPropsType = {
+  color: string
+  width: string
+}
+
+export default function LoadingSpinner({
+  color,
+  width,
+}: LoadingSpinnerPropsType) {
   return (
-    <div className={classNames(styles.container)}>
+    <div
+      className={classNames(styles.container)}
+      style={{ "--color": color, "--width": width } as React.CSSProperties}
+    >
       <div className={classNames(styles.bar, styles.bar1)}></div>
       <div className={classNames(styles.bar, styles.bar2)}></div>
       <div className={classNames(styles.bar, styles.bar3)}></div>
